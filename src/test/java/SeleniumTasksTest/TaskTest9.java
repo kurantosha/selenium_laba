@@ -1,49 +1,29 @@
 package SeleniumTasksTest;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+import utils.Utils;
 
-import java.time.Duration;
-
-public class TaskTest9 {
-    private WebDriver driver;
+public class TaskTest9 extends BaseTest {
 
     @Test
-    public void CheckThatProgressBar() {
+    public void checkThatProgressBar() {
         String expectedFiniteCountProgressBar = "100";
         String expectedInitialCountProgressBar = "0";
 
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://demoqa.com/");
-
         // Click on Widgets
         WebElement widgetsButton = driver.findElement(By.xpath("//div[@class='card-body']/h5[text()='Widgets']"));
+        Utils.scrollToElement(driver, widgetsButton);
         widgetsButton.click();
 
-        // close ads
-        WebElement closeAds = driver.findElement(By.xpath("//a[@id='close-fixedban']"));
-        closeAds.click();
-
-        WebElement progressBarButton = driver.findElement(By.xpath("//div[@class='element-list collapse show']//li[@id='item-4']"));
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
-        wait.until(ExpectedConditions.elementToBeClickable(progressBarButton));
-
         // Click on Progress bar
-        Actions action = new Actions(driver);
-        action.sendKeys(Keys.DOWN).moveToElement(progressBarButton).build().perform();
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[contains(@class, 'show')]//li")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'show')]//li[@id='item-4']")));
+        WebElement progressBarButton = driver.findElement(By.xpath("//div[contains(@class, 'show')]//li[@id='item-4']"));
+        Utils.scrollToElement(driver, progressBarButton);
         progressBarButton.click();
 
         // Click Start button
@@ -51,8 +31,7 @@ public class TaskTest9 {
         startButton.click();
 
         // Check that after some time progress bar filled with 100%
-        WebDriverWait progressBarWail = new WebDriverWait(driver, Duration.ofSeconds(10));
-        progressBarWail.until(ExpectedConditions.attributeToBe(By.xpath("//div[@role='progressbar']"), "aria-valuenow", "100"));
+        wait.until(ExpectedConditions.attributeToBe(By.xpath("//div[@role='progressbar']"), "aria-valuenow", "100"));
 
         WebElement finiteCountProgressBar = driver.findElement(By.xpath("//div[@role='progressbar']"));
         String actualFiniteCountProgressBar = finiteCountProgressBar.getAttribute("aria-valuenow");
@@ -74,12 +53,5 @@ public class TaskTest9 {
                 .isEqualTo(expectedInitialCountProgressBar);
 
         softAssertions.assertAll();
-
     }
-
-    @AfterMethod(alwaysRun = true)
-    public void quiteDriver() {
-        driver.quit();
-    }
-
 }

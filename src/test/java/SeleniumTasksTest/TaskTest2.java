@@ -1,32 +1,27 @@
 package SeleniumTasksTest;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.assertj.core.api.Assertions;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterMethod;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
+import utils.Utils;
 
-public class TaskTest2 {
-    private WebDriver driver;
+public class TaskTest2 extends BaseTest {
 
     @Test
-    public void CheckThatAppearsMessageWhenSelectedWordFile() {
+    public void checkThatAppearsMessageWhenSelectedWordFile() {
         String expectedTextResult = "You have selected :wordFile";
-
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://demoqa.com/");
 
         // Click on "Elements button"
         WebElement elementsButton = driver.findElement(By.xpath("//div[@class='card-body']/h5[text()='Elements']"));
+        Utils.scrollToElement(driver, elementsButton);
         elementsButton.click();
 
         // Click on "Check Box"
-        WebElement checkBoxButton = driver.findElement(By.xpath("//div[@class='element-list collapse show']//li[@id='item-1']"));
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[contains(@class, 'show')]//li")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'show')]//li[@id='item-1']")));
+        WebElement checkBoxButton = driver.findElement(By.xpath("//div[contains(@class, 'show')]//li[@id='item-1']"));
         checkBoxButton.click();
 
         // Uncollapse "Home"
@@ -41,13 +36,8 @@ public class TaskTest2 {
         WebElement wordFileCheckBox = driver.findElement(By.xpath("//label[@for='tree-node-wordFile']/span[@class='rct-checkbox']"));
         wordFileCheckBox.click();
 
-//        Assertions.assertThat(wordFileCheckBox.isSelected())
-//                .as("After click on WordFile.doc checkbox it should be selected")
-//                .isTrue();
-
         WebElement selectedMessage = driver.findElement(By.xpath("//div[@id='result']/span[@class='text-success']"));
         String actualTextResult = "You have selected :" + selectedMessage.getText();
-
 
         // Check that “You have selected :wordFile” appears
         Assertions.assertThat(actualTextResult)
@@ -55,10 +45,4 @@ public class TaskTest2 {
                 .isEqualTo(expectedTextResult);
 
     }
-
-    @AfterMethod(alwaysRun = true)
-    public void quiteDriver() {
-        driver.quit();
-    }
-
 }

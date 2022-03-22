@@ -1,36 +1,32 @@
 package SeleniumTasksTest;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.testng.annotations.AfterMethod;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
+import utils.Utils;
 
-public class TaskTest3 {
-    private WebDriver driver;
+public class TaskTest3 extends BaseTest {
 
     @Test
-    public void CheckThatAppearsMessageWhenSelectedWordFile() {
+    public void checkThatAppearsMessageWhenSelectedWordFile() {
         String expectedClickMeMessage = "You have done a dynamic click";
         String expectedRightClickMeMessage = "You have done a right click";
         String expectedDoubleClickMeMessage = "You have done a double click";
 
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://demoqa.com/");
         Actions actions = new Actions(driver);
 
         // Click on "Elements button"
         WebElement elementsButton = driver.findElement(By.xpath("//div[@class='card-body']/h5[text()='Elements']"));
+        Utils.scrollToElement(driver, elementsButton);
         elementsButton.click();
 
         // Click "Buttons"
-        WebElement buttonsButton = driver.findElement(By.xpath("//div[@class='element-list collapse show']//li[@id='item-4']"));
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[contains(@class, 'show')]//li")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'show')]//li[@id='item-4']")));
+        WebElement buttonsButton = driver.findElement(By.xpath("//div[contains(@class, 'show')]//li[@id='item-4']"));
         buttonsButton.click();
 
         // Click on “Click Me” button
@@ -48,7 +44,7 @@ public class TaskTest3 {
         WebElement rightClickMeLabel = driver.findElement(By.id("rightClickMessage"));
         String actualRightClickMeMessage = rightClickMeLabel.getText();
 
-        // Double click on “Double Click Me” button
+        // Double-click on “Double Click Me” button
         WebElement doubleClickMeButton = driver.findElement(By.xpath("//button[@id='doubleClickBtn']"));
         actions.doubleClick(doubleClickMeButton)
                 .build().perform();
@@ -72,10 +68,4 @@ public class TaskTest3 {
         softAssertions.assertAll();
 
     }
-
-    @AfterMethod(alwaysRun = true)
-    public void quiteDriver() {
-        driver.quit();
-    }
-
 }

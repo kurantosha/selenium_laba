@@ -1,35 +1,30 @@
 package SeleniumTasksTest;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterMethod;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.testng.annotations.Test;
+import utils.Utils;
 
-public class TaskTest1 {
-    private WebDriver driver;
+public class TaskTest1 extends BaseTest {
 
     @Test
-    public void CheckThatFilledDataTheSameAsAppearsBelowTest() {
-        String expectedUserName = "Anton Kurhanov";
+    public void checkThatFilledDataTheSameAsAppearsBelowTest() {
+        String expectedUserName = "Anton Kurganov";
         String expectedUserEmail = "mail@gmail.com";
         String expectedCurrentAddress = "vul.Soborna 1, Vinnitsa";
         String expectedPermanentAddress = "vul.Soborna 2, Vinnitsa";
 
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.get("https://demoqa.com/");
-
         // Click on Elements button
         WebElement elementsButton = driver.findElement(By.xpath("//div[@class='card-body']/h5[text()='Elements']"));
+        Utils.scrollToElement(driver, elementsButton);
         elementsButton.click();
 
         // Click on Text Box
-        WebElement textBoxButton = driver.findElement(By.xpath("//div[@class='element-list collapse show']//li[@id='item-0']"));
+        wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[contains(@class, 'show')]//li")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'show')]//li[@id='item-0']")));
+        WebElement textBoxButton = driver.findElement(By.xpath("//div[contains(@class, 'show')]//li[@id='item-0']"));
         textBoxButton.click();
 
         // Input form
@@ -51,6 +46,7 @@ public class TaskTest1 {
 
         // Click Submit button
         WebElement submitButton = driver.findElement(By.xpath("//button[@id='submit']"));
+        Utils.scrollToElement(driver, submitButton);
         submitButton.click();
 
         // Output data
@@ -87,10 +83,4 @@ public class TaskTest1 {
         softAssertions.assertAll();
 
     }
-
-    @AfterMethod(alwaysRun = true)
-    public void quiteDriver() {
-        driver.quit();
-    }
-
 }
