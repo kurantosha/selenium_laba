@@ -2,6 +2,7 @@ package SeleniumTasksTest;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -28,9 +29,15 @@ public class BaseTest {
     }
 
     public void closeAds() {
-        WebElement adArrow = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("close-fixedban")));
-        adArrow.click();
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("close-fixedban")));
+        WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(5));
+        try {
+            WebElement adArrow = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("close-fixedban")));
+            adArrow.click();
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("close-fixedban")));
+        } catch (TimeoutException e) {
+            System.out.println("Ads no exist");
+        }
+
     }
 
     @AfterMethod(alwaysRun = true)
